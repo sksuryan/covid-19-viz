@@ -57,7 +57,7 @@ class LineGraph extends React.Component{
             /* retriving last updated value from current props*/
             const current = this.props.data.data.updated_at;
             /* checking if both of them are equal*/
-            const screenWidth = this.props.screenWidth;
+            const screenWidth = window.innerWidth;
             this.previousWidth = this.width;
             if (screenWidth > 800) {
                 this.width = 700;
