@@ -1,26 +1,44 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Nav from './components/Nav'
+import Visualization from './components/Vizualization'
+
+class App extends React.Component {
+
+  constructor(props){
+    super(props);
+
+    this.state = {
+      screenWidth: window.innerWidth,
+    }
+
+    this.updateWidth = this.updateWidth.bind(this);
+  }
+
+  componentDidMount(){
+    window.addEventListener("resize", this.updateWidth);
+    this.updateWidth();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWidth);
+  }
+
+  updateWidth(){
+    this.setState({
+      screenWidth: window.innerWidth,
+      }
+    );
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <Nav />
+        <Visualization screenWidth={this.state.screenWidth}/>
+      </div>
+    );
+  }
 }
 
 export default App;
