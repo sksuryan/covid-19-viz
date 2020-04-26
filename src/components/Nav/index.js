@@ -32,7 +32,7 @@ const Wrapper = styled.div`
     margin: 0 auto;
 `;
 
-const Nav =  (props) => {
+const Nav = (props) => {
     return (
         <Wrapper>
             <Logo as='a' href='#'>

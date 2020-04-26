@@ -2,43 +2,36 @@ import React from 'react';
 
 import Nav from './components/Nav'
 import Visualization from './components/Vizualization'
+import styled from 'styled-components';
 
-class App extends React.Component {
+const Text = styled.p`
+  font-family: Montserrat;
+  font-size: 14px;
 
-  constructor(props){
-    super(props);
+  text-align: center;
 
-    this.state = {
-      screenWidth: window.innerWidth,
-    }
+  margin: 0 auto;
 
-    this.updateWidth = this.updateWidth.bind(this);
+  margin-top: 60px;
+  margin-bottom: 20px;
+
+  max-width: 80%;
+
+  overflow-wrap: break-word;
+
+  a{
+    color: #000;
   }
+`;
 
-  componentDidMount(){
-    window.addEventListener("resize", this.updateWidth);
-    this.updateWidth();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.updateWidth);
-  }
-
-  updateWidth(){
-    this.setState({
-      screenWidth: window.innerWidth,
-      }
-    );
-  }
-
-  render() {
-    return (
-      <div className="App">
-        <Nav />
-        <Visualization screenWidth={this.state.screenWidth}/>
-      </div>
-    );
-  }
+function App(props){
+  return (
+    <div className="App">
+      <Nav />
+      <Visualization />
+      <Text>This website uses data from API graciously provided by <a href='https://about-corona.net'>about-corona.net</a>.</Text>
+    </div>
+  );
 }
 
 export default App;
