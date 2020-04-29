@@ -24,7 +24,7 @@ const Text = styled.p`
   }
 `;
 
-function App(props){
+function App(){
   return (
     <div className="App">
       <Nav />
