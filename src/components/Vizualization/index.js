@@ -1,14 +1,46 @@
 import React from 'react';
 import styled from 'styled-components';
-import * as d3 from 'd3';
 
-import LineGraph from '../LineGraph';
-import PieChart from '../PieChart';
+import LineGraph from '../Graphs/LineGraph';
+import PieChart from '../Graphs/PieChart';
 import StatsText from '../StatsText';
+import LoadingAnimation from '../LoadingAnimation';
+
+const colors = {
+    confirmed: {
+        color: '#96ceb4',
+        label: 'Confirmed Cases'
+    },
+    active: {
+        color: '#ffcc5c',
+        label: 'Active Cases'
+    },
+    deaths: {
+        color: '#ff6f69',
+        label: 'Death Cases',
+    },
+    recovered: {
+        color: '#88d8b0',
+        label: 'Recovered Cases'
+    },
+    new_confirmed: {
+        color: '#ffcc5c',
+        label: 'New Cases'
+    },
+    new_deaths: {
+        color: '#ff6f69',
+        label: 'New Death Cases'
+    },
+    new_recovered: {
+        color: '#88d8b0',
+        label: 'New Recovered Cases'
+    }
+}
 
 //  --> Styled components start <--
 /* A styled Wrapper div for every other element in the component*/
 const Wrapper = styled.div`
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -27,27 +59,23 @@ const Country = styled.h1`
     text-transform: uppercase;
 
     margin: 0;
-
-    padding: 20px 0;
 `;
 
-/* A styled component to Wrap PieChart and Stats*/
-const PieChartWrapper = styled.div`
+/* styled h1 for country name */
+const Label = styled.h1`
+    font-family: Lilita One;
+    font-size: 28px;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 20px 0;
+`;
+
+const Seperator = styled.div`
+    margin: 20px 0;
+
     display: flex;
-    align-self: center;
-    justify-content: ${props => props.justify?props.justify:'center'};
-
-    width: ${props => props.width?props.width:'none'};
-
-    flex-direction: row;
-
-    margin-top: ${props => props.margin?props.margin:0};
-
-    @media (max-width: 800px){
-        flex-direction: column;
-        justify-content: center;
-        width: fit-content;
-    }
+    flex-direction: column;
+    align-items: center;
 `;
 
 //  --> Styled components end <--
@@ -65,9 +93,9 @@ class Visualization extends React.Component{
             screenWidth: window.innerWidth,
         }
 
-        this.handleClick = this.handleClick.bind(this);
-        /* binding this to the function */
+        /* binding this to the functions */
         this.updateWidth = this.updateWidth.bind(this);
+        this.fetchData = this.fetchData.bind(this);
     }    
 
     /* function to update state when window is resized*/
@@ -82,10 +110,20 @@ class Visualization extends React.Component{
         /* adding an event listener to trigger actions when window is resized*/
         window.addEventListener("resize", this.updateWidth);
         this.updateWidth();
-        /* requests for fetching data upon website is rendered completely */
-        d3.json('https://corona-api.com/countries/in?include=timeline')
-            .then((data) => this.setState({data}))
-            .catch((err) => console.log(err));
+        /* calling fetchData function after component is mounted. */
+        this.fetchData('in')
+            .then(data => setTimeout(() => this.setState({data}),750))
+            .catch(err => console.error(err));
+    }
+
+    /* asynchronously fetching data from API */
+    async fetchData(countryCode){
+        const response = await fetch(`https://corona-api.com/countries/${countryCode}?include=timeline`);
+        if(response.status !== 200) {
+            throw new Error('Resource not found');
+        }
+        const data = await response.json();
+        return data;
     }
 
     componentWillUnmount() {
@@ -93,31 +131,9 @@ class Visualization extends React.Component{
         window.removeEventListener('resize', this.updateWidth);
     }
 
-    /* a temporary function */
-    handleClick(e){
-        d3.json(`https://corona-api.com/countries/${e.target.value}?include=timeline`)
-            .then((data) => this.setState({data}))
-            .catch((err) => console.log(err));
-    }
-
     render(){
         /* gets required fields from the fetched data*/        
         const data = this.state.data;
-
-        const newData = data?[
-            {
-                label: 'New Confirmed Cases: ',
-                value: data.data.timeline[0].new_confirmed,
-            },
-            {
-                label: 'New Recovered Cases: ',
-                value: data.data.timeline[0].new_recovered,
-            },
-            {
-                label: 'New Death Cases: ',
-                value: data.data.timeline[0].new_deaths,
-            }
-        ]:[];
         
         let latest = data?[
             {
@@ -159,19 +175,45 @@ class Visualization extends React.Component{
                 {
                     this.state.data?(
                         <>
-                            {/* Stats */}
-                            <StatsText data={newData} divClass='horizontal-wrapper'/>
-                            {/* Line Graph */}
-                            <LineGraph data={this.state.data} screenWidth={this.state.screenWidth}/>
-                            <PieChartWrapper width='750px' justify='space-evenly' margin='40px'>
+                            <Seperator>
+                                {/* Stats */}
+                                <StatsText data={latest2} divClass='horizontal-wrapper'/>
                                 {/* Pie Chart */}
                                 <PieChart data={latest} lastUpdated={data?data.data.timeline[0].updated_at:-1}/>
-                                {/* Stats */}
-                                <StatsText data={latest2} divClass='vertical-wrapper' dir='column'/>
-                            </PieChartWrapper>
+                            </Seperator>
+                            <Seperator>
+                                {/* Line Graph */}
+                                <LineGraph 
+                                    data={this.state.data} 
+                                    screenWidth={this.state.screenWidth} 
+                                    metric='confirmed' 
+                                    draw={['confirmed','active']}
+                                    color={colors}
+                                />
+                            </Seperator>
+                            <Seperator>
+                                <Label>New Cases per Day:</Label>
+                                <LineGraph 
+                                    data={this.state.data} 
+                                    screenWidth={this.state.screenWidth} 
+                                    metric='new_confirmed' 
+                                    draw={['new_confirmed']}
+                                    color={colors}
+                                />
+                            </Seperator>
+                            <Seperator>
+                            <Label>New Recovered Cases and Deaths per Day:</Label>
+                            <LineGraph 
+                                data={this.state.data} 
+                                screenWidth={this.state.screenWidth} 
+                                metric='new_recovered' 
+                                draw={['new_recovered', 'new_deaths']}
+                                color={colors}
+                            />
+                            </Seperator>
                         </>
                     ):(
-                        <></>
+                        <LoadingAnimation />
                     )
                 }
             </Wrapper>

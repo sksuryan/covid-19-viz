@@ -12,7 +12,7 @@ const Text = styled.p`
 
   margin: 0 auto;
 
-  margin-top: 60px;
+  margin-top: 30px;
   margin-bottom: 20px;
 
   max-width: 80%;

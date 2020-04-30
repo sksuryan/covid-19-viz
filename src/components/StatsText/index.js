@@ -9,7 +9,7 @@ const Wrapper = styled.div`
     justify-content: center;
 
     flex-direction: ${props => props.dir?props.dir:'row'};
-
+    padding: 16px 0;
     @media (max-width: 800px){
         flex-direction: column;
     }

@@ -24,8 +24,6 @@ const Legend = styled.div`
         grid-auto-flow: row;
     }
 
-    margin-top: 35px;
-
     /* css for svg inside Legend */
     svg{
         width: 100%;
@@ -66,8 +64,7 @@ class LineGraph extends React.Component{
         };
 
         /* empty string to use later*/
-        this.pathData = '';
-        this.activeCaseData =  '';
+        this.pathData = [];
 
         /* Binding createGraph() with this */
         this.createGraph = this.createGraph.bind(this);
@@ -98,6 +95,10 @@ class LineGraph extends React.Component{
     createGraph(){
         /* extracting data from props*/
         const data = this.props.data.data.timeline;
+        const metric = this.props.metric;
+        const toDraw = this.props.draw;
+
+        this.pathData = [];
 
         /* setting up domain and range for X axis*/
         /* min and max of Date */
@@ -106,7 +107,7 @@ class LineGraph extends React.Component{
             .range([this.margin.left,this.width - this.margin.right]);
 
         /* setting up domain and range for y axis */
-        this.yScale.domain(d3.extent(data, d => d.confirmed))
+        this.yScale.domain(d3.extent(data, d => d[metric]))
             .range([this.height-this.margin.bottom,this.margin.top]);
 
         /* creating a xAxis function*/
@@ -119,15 +120,13 @@ class LineGraph extends React.Component{
         /* creating a yAxis function */
         const yAxis = d3.axisLeft().scale(this.yScale);
 
-        /* setting up line object that creates line string for confirmed cases */
-        const line = d3.line()
-            .x(d => this.xScale(Date.parse(d.date)))
-            .y(d => this.yScale(d.confirmed));
-
-        /* setting up line object that creates line string for active cases */
-        const secondLine = d3.line()
-            .x(d => this.xScale(Date.parse(d.date)))
-            .y(d => this.yScale(d.active));
+        toDraw.forEach(elt => {
+            this.pathData.push(
+                d3.line()
+                    .x(d => this.xScale(Date.parse(d.date)))
+                    .y(d => this.yScale(d[elt]))(data)
+            )
+        });
 
         /* creating xAxis */
         d3.select(this.xAxis.current)
@@ -143,10 +142,6 @@ class LineGraph extends React.Component{
         d3.select(this.yAxis.current)
             .call(yAxis);
 
-        /* generating path string */
-        this.confirmedCaseData = line(data);
-        this.activeCaseData = secondLine(data);
-
         /* saving the current width for comparision when width changes later */
         this.previousWidth = this.width;
 
@@ -158,22 +153,27 @@ class LineGraph extends React.Component{
 
     /* render() function returning necessary elements*/
     render(){
+        const color = this.props.color;
+        const draw = this.props.draw;
         return (
             <>
                 <Legend>
-                    <svg>
-                        <circle cx='60' cy='10' r='6' fill='#96ceb4'></circle>
-                        <text x='80' y='14' className='legend'>Confirmed Cases</text>
-                    </svg>
-                    <svg>
-                        <circle cx='60' cy='10' r='6' fill='#ffcc5c'></circle>
-                        <text x='80' y='14' className='legend'>Active Cases</text>
-                    </svg>
+                    {
+                        draw.map((elt,i) => 
+                            <svg key={i}>
+                                <circle cx='60' cy='10' r='6' fill={color[elt].color}></circle>
+                                <text x='80' y='14' className='legend'>{color[elt].label}</text>
+                            </svg>
+                        )
+                    }
                 </Legend>
                 <svg width={this.width = window.innerWidth>800?700:window.innerWidth*0.8} height={this.height}>
                     {/* Path DOM element for line*/}
-                    <Path stroke='#96ceb4' d={this.confirmedCaseData}/>
-                    <Path stroke='#ffcc5c' d={this.activeCaseData}/>
+                    {
+                        this.pathData.map( (elt,i) =>
+                            <Path key={i} stroke={color[draw[i]].color} d={elt}/>
+                        )
+                    }
                     {/* xAxis */}
                     <g ref={this.xAxis} transform={`translate(0,${this.height-this.margin.bottom})`}></g>
                     {/* yAxis */}
