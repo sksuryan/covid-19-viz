@@ -34,6 +34,10 @@ const Legend = styled.div`
         text{
             font-family: 'Montserrat';
             font-size: 14px;
+
+            @media (max-width: 600px){
+                font-size: 12px;
+            }
         }
     }
 `;

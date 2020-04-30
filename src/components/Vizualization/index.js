@@ -25,7 +25,7 @@ const colors = {
     },
     new_confirmed: {
         color: '#ffcc5c',
-        label: 'New Cases'
+        label: 'New Confirmed Cases'
     },
     new_deaths: {
         color: '#ff6f69',
@@ -58,16 +58,23 @@ const Country = styled.h1`
     font-size: 36px;
     text-transform: uppercase;
 
+    @media (max-width: 600px) {
+        font-size: 28px;
+    }
+
     margin: 0;
 `;
 
 /* styled h1 for country name */
 const Label = styled.h1`
-    font-family: Lilita One;
-    font-size: 28px;
-    text-transform: uppercase;
+    font-family: Montserrat;
+    font-size: 20px;
     text-align: center;
     margin: 20px 0;
+
+    @media (max-width: 600px) {
+        font-size: 18px;
+    }
 `;
 
 const Seperator = styled.div`

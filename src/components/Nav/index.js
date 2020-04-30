@@ -20,6 +20,15 @@ const Logo = styled.h1`
         font-weight: Lighter;
 
         margin: 0;
+
+        @media (max-width: 600px) {
+            font-size: 11px
+        }
+    }
+
+    @media (max-width: 600){
+        font-weight: lighter;
+        font-size: 12px;
     }
 `;
 

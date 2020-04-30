@@ -39,17 +39,24 @@ const Wrapper = styled.div`
     .count {
         font-family: 'Lilita One';
         font-size: 18px;
-
         margin: 0;
+
+        @media (max-width: 600px){
+            font-size: 16px;
+        }
     }
 
     /* styles the label, a class type should be given to the label*/
     .type {
         font-family: 'Montserrat';
         font-size: 16px;
-
+        font-weight: lighter;
         padding: 0 6px 0 0;
         margin: 0;
+
+        @media (max-width: 600px){
+            font-size: 14px;
+        }
     }
 `;
 // --> Styled Components end <--
