@@ -27,9 +27,6 @@ class PieChart extends React.Component {
         this.arcs = [];
         this.textPosition = [];
 
-        //colors for arcs in pie chart
-        this.colors = ['#ffcc5c','#88d8b0','#ff6f69']
-
         //defining the state object
         this.state = {
             reload: false
@@ -51,11 +48,13 @@ class PieChart extends React.Component {
     createChart(){
         /* extracting data from props */
         const data = this.props.data;
+        const draw = this.props.draw;
+        const labels = this.props.color;
 
         /* creating a function that generates data for arcs*/
-        const pie = d3.pie().value(d => d.value);
+        const pie = d3.pie().value(d => data[d]);
         /* generating object for arcs*/
-        const pieData = pie(data);
+        const pieData = pie(draw);
 
         /* creating a function that generates path string from pieData*/
         const arc = d3.arc().innerRadius(0).outerRadius(this.width/2);
@@ -70,9 +69,10 @@ class PieChart extends React.Component {
             if(i === 2)
                 y = y+18;
 
-            const data = elt.data;
+            const data = labels[elt.data].word;
+            const color = labels[elt.data].color;
 
-            return ({data,x,y});
+            return ({data,color,x,y});
         })
 
         this.previousWidth = this.width;
@@ -96,14 +96,14 @@ class PieChart extends React.Component {
                             <g key={i}>
                                 <path  
                                     d={elt} 
-                                    fill={this.colors[i]}
-                                    stroke={this.colors[i]}>
+                                    fill={this.textPosition[i].color}
+                                    stroke={this.textPosition[i].color}>
                                 </path>
                                 <Text
                                     x={this.textPosition[i].x}
                                     y={this.textPosition[i].y}
                                 >
-                                    {this.textPosition[i].data.key}
+                                    {this.textPosition[i].data}
                                 </Text>
                             </g>
                         )

@@ -63,14 +63,16 @@ const Wrapper = styled.div`
 
 // --> React functional component starts <--
 const StatsText = (props) => {
-    const data = props.data?props.data:[];
+    const data = props.data;
+    const labels = props.labels;
+    const display = props.display;
     return (
         <Wrapper dir={props.dir}>
-            {data.map((elt,i) => { 
+            {display.map((elt,i) => { 
                     return (
                         <div className={props.divClass} key={i}>
-                            <h1 className='type'>{elt.label}</h1>
-                            <h1 className='count'>{elt.value}</h1>
+                            <h1 className='type'>{labels[elt].label}</h1>
+                            <h1 className='count'>{data[elt]}</h1>
                         </div>
                     )  
                 }  

@@ -9,19 +9,23 @@ import LoadingAnimation from '../LoadingAnimation';
 const colors = {
     confirmed: {
         color: '#96ceb4',
-        label: 'Confirmed Cases'
+        label: 'Confirmed Cases',
+        word: 'Confirmed'
     },
     active: {
         color: '#ffcc5c',
-        label: 'Active Cases'
+        label: 'Active Cases',
+        word: 'Active'
     },
     deaths: {
         color: '#ff6f69',
         label: 'Death Cases',
+        word: 'Deaths'
     },
     recovered: {
         color: '#88d8b0',
-        label: 'Recovered Cases'
+        label: 'Recovered Cases',
+        word: 'Recovered'
     },
     new_confirmed: {
         color: '#ffcc5c',
@@ -141,41 +145,6 @@ class Visualization extends React.Component{
     render(){
         /* gets required fields from the fetched data*/        
         const data = this.state.data;
-        
-        let latest = data?[
-            {
-                key: 'Active',
-                value: data.data.timeline[0].active,
-            },
-            {
-                key: 'Recovered',
-                value: data.data.timeline[0].recovered,
-            },
-            {
-                key: 'Deaths',
-                value: data.data.timeline[0].deaths,
-            }
-        ]:[];
-
-        let latest2 = data?[
-            {
-                label: 'Confirmed Cases: ',
-                value: data.data.timeline[0].confirmed,
-            },
-            {
-                label: 'Active Cases: ',
-                value: data.data.timeline[0].active,
-            },
-            {
-                label: 'Recovered Cases: ',
-                value: data.data.timeline[0].recovered,
-            },
-            {
-                label: 'Death Cases: ',
-                value: data.data.timeline[0].deaths,
-            }
-        ]:null;
-
         return (
             <Wrapper>
                 <Country>{this.state.data?this.state.data.data.name:'Loading'}</Country>
@@ -184,9 +153,19 @@ class Visualization extends React.Component{
                         <>
                             <Seperator>
                                 {/* Stats */}
-                                <StatsText data={latest2} divClass='horizontal-wrapper'/>
+                                <StatsText 
+                                    data={data?data.data.timeline[0]:[]}
+                                    display={['confirmed','active','recovered','deaths']}
+                                    labels={colors} 
+                                    divClass='horizontal-wrapper'
+                                />
                                 {/* Pie Chart */}
-                                <PieChart data={latest} lastUpdated={data?data.data.timeline[0].updated_at:-1}/>
+                                <PieChart
+                                    data={data?data.data.timeline[0]:[]} 
+                                    lastUpdated={data?data.data.timeline[0].updated_at:-1}
+                                    draw={['active','recovered','deaths']}
+                                    color={colors}
+                                />
                             </Seperator>
                             <Seperator>
                                 {/* Line Graph */}
