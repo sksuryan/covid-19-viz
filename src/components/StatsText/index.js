@@ -71,7 +71,7 @@ const StatsText = (props) => {
             {display.map((elt,i) => { 
                     return (
                         <div className={props.divClass} key={i}>
-                            <h1 className='type'>{labels[elt].label}</h1>
+                            <h1 className='type'>{`${labels[elt].label}:  `}</h1>
                             <h1 className='count'>{data[elt]}</h1>
                         </div>
                     )  

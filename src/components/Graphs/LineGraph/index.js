@@ -122,7 +122,7 @@ class LineGraph extends React.Component{
             xAxis.ticks(d3.utcMonth);
 
         /* creating a yAxis function */
-        const yAxis = d3.axisLeft().scale(this.yScale);
+        const yAxis = d3.axisLeft().scale(this.yScale).tickFormat(d3.format('.3s'));
 
         toDraw.forEach(elt => {
             this.pathData.push(

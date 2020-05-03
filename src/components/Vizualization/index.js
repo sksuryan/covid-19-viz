@@ -100,13 +100,11 @@ class Visualization extends React.Component{
 
         /* defining state object */
         this.state = {
-            data: null,
             screenWidth: window.innerWidth,
         }
 
         /* binding this to the functions */
         this.updateWidth = this.updateWidth.bind(this);
-        this.fetchData = this.fetchData.bind(this);
     }    
 
     /* function to update state when window is resized*/
@@ -121,20 +119,6 @@ class Visualization extends React.Component{
         /* adding an event listener to trigger actions when window is resized*/
         window.addEventListener("resize", this.updateWidth);
         this.updateWidth();
-        /* calling fetchData function after component is mounted. */
-        this.fetchData('in')
-            .then(data => setTimeout(() => this.setState({data}),750))
-            .catch(err => console.error(err));
-    }
-
-    /* asynchronously fetching data from API */
-    async fetchData(countryCode){
-        const response = await fetch(`https://corona-api.com/countries/${countryCode}?include=timeline`);
-        if(response.status !== 200) {
-            throw new Error('Resource not found');
-        }
-        const data = await response.json();
-        return data;
     }
 
     componentWillUnmount() {
@@ -144,60 +128,64 @@ class Visualization extends React.Component{
 
     render(){
         /* gets required fields from the fetched data*/        
-        const data = this.state.data;
+        const data = this.props.data;
         return (
             <Wrapper>
-                <Country>{this.state.data?this.state.data.data.name:'Loading'}</Country>
+                <Country>{data?data.data.name:'Loading'}</Country>
                 {
-                    this.state.data?(
-                        <>
-                            <Seperator>
-                                {/* Stats */}
-                                <StatsText 
-                                    data={data?data.data.timeline[0]:[]}
-                                    display={['confirmed','active','recovered','deaths']}
-                                    labels={colors} 
-                                    divClass='horizontal-wrapper'
-                                />
-                                {/* Pie Chart */}
-                                <PieChart
-                                    data={data?data.data.timeline[0]:[]} 
-                                    lastUpdated={data?data.data.timeline[0].updated_at:-1}
-                                    draw={['active','recovered','deaths']}
-                                    color={colors}
-                                />
-                            </Seperator>
-                            <Seperator>
-                                {/* Line Graph */}
+                    data?(
+                        (data.data.timeline.length>0)?(
+                            <>
+                                <Seperator>
+                                    {/* Stats */}
+                                    <StatsText 
+                                        data={data?data.data.timeline[0]:[]}
+                                        display={['confirmed','active','recovered','deaths']}
+                                        labels={colors} 
+                                        divClass='horizontal-wrapper'
+                                    />
+                                    {/* Pie Chart */}
+                                    <PieChart
+                                        data={data?data.data.timeline[0]:[]} 
+                                        lastUpdated={data?data.data.timeline[0].updated_at:-1}
+                                        draw={['active','recovered','deaths']}
+                                        color={colors}
+                                    />
+                                </Seperator>
+                                <Seperator>
+                                    {/* Line Graph */}
+                                    <LineGraph 
+                                        data={data} 
+                                        screenWidth={this.state.screenWidth} 
+                                        metric='confirmed' 
+                                        draw={['confirmed','active']}
+                                        color={colors}
+                                    />
+                                </Seperator>
+                                <Seperator>
+                                    <Label>New Cases per Day:</Label>
+                                    <LineGraph 
+                                        data={data} 
+                                        screenWidth={this.state.screenWidth} 
+                                        metric='new_confirmed' 
+                                        draw={['new_confirmed']}
+                                        color={colors}
+                                    />
+                                </Seperator>
+                                <Seperator>
+                                <Label>New Recovered Cases and Deaths per Day:</Label>
                                 <LineGraph 
-                                    data={this.state.data} 
+                                    data={data} 
                                     screenWidth={this.state.screenWidth} 
-                                    metric='confirmed' 
-                                    draw={['confirmed','active']}
+                                    metric='new_recovered' 
+                                    draw={['new_recovered', 'new_deaths']}
                                     color={colors}
                                 />
-                            </Seperator>
-                            <Seperator>
-                                <Label>New Cases per Day:</Label>
-                                <LineGraph 
-                                    data={this.state.data} 
-                                    screenWidth={this.state.screenWidth} 
-                                    metric='new_confirmed' 
-                                    draw={['new_confirmed']}
-                                    color={colors}
-                                />
-                            </Seperator>
-                            <Seperator>
-                            <Label>New Recovered Cases and Deaths per Day:</Label>
-                            <LineGraph 
-                                data={this.state.data} 
-                                screenWidth={this.state.screenWidth} 
-                                metric='new_recovered' 
-                                draw={['new_recovered', 'new_deaths']}
-                                color={colors}
-                            />
-                            </Seperator>
-                        </>
+                                </Seperator>
+                            </>
+                        ):(
+                            <LoadingAnimation />
+                        )
                     ):(
                         <LoadingAnimation />
                     )

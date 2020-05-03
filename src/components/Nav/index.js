@@ -1,9 +1,10 @@
 import React from 'react'
 import styled from 'styled-components';
+import Search from '../Search';
 
 const Logo = styled.h1`
     font-family: Lilita One;
-    font-size: 18px;
+    font-size: 22px;
     color: #000;
     text-decoration: none;
 
@@ -16,7 +17,7 @@ const Logo = styled.h1`
 
     .by-line{
         font-family: 'Montserrat';
-        font-size: 14px;
+        font-size: 12px;
         font-weight: Lighter;
 
         margin: 0;
@@ -34,20 +35,27 @@ const Logo = styled.h1`
 
 const Wrapper = styled.div`
     display: flex;
-    justify-content: spaced-around;
+    justify-content: space-between;
     align-items: center;
 
     width: 90%;
-    margin: 0 auto;
+    margin: 18px auto;
+
+    @media (max-width: 800px){
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+    }
 `;
 
 const Nav = (props) => {
     return (
         <Wrapper>
             <Logo as='a' href='#'>
-                COVID-19<br/>VISUALIZED
-                <h1 className='by-line'>by Messy Parameters</h1>
+                CoViz.
+                <h1 className='by-line'>by @sksuryan</h1>
             </Logo>
+            <Search loadData={props.loadData}></Search>
         </Wrapper>
     );
 }
