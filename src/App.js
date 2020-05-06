@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Nav from './components/Nav'
-import Visualization from './components/Vizualization'
+import Nav from './components/Nav';
+import Visualization from './components/Vizualization';
 
 
 // --> Styled components start <--
@@ -46,9 +46,22 @@ class App extends React.Component{
     // to load data once component is loaded
     componentDidMount(){
         /* calling fetchGlobalData function after component is mounted. */
-        this.fetchGlobalData()
-            .then(data => setTimeout(() => this.setState({data}),750))
-            .catch(err => console.error(err));
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                const {latitude, longitude} = position.coords;
+                console.log(latitude);
+                const REV_GEOCODE_API = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`;
+                fetch(REV_GEOCODE_API)
+                    .then(response => response.json())
+                    .then(data => this.loadData(data.countryCode))
+                    .then(data => setTimeout(() => this.setState({data}),750))
+                    .catch(err => console.err(err));
+            })
+        } else {
+            this.fetchGlobalData()
+                .then(data => setTimeout(() => this.setState({data}),750))
+                .catch(err => console.error(err));
+        }
     }
 
     // calls either fetchData and fetchGlobalData depending upon parameter passed (countryCode)
@@ -102,7 +115,8 @@ class App extends React.Component{
                 <Nav loadData={this.loadData}/>
                 <Visualization data={this.state.data}/>
                 {/* Footer Text*/}
-                <Text>This website uses data from APIs graciously provided by <a href='https://about-corona.net' rel="noopener noreferrer" target='_blank'>about-corona.net</a> and <a href='https://restcountries.eu/' rel="noopener noreferrer" target='_blank'>Rest Countries</a>.</Text>
+                <Text>
+                    This website uses data from APIs graciously provided by <a href='https://about-corona.net' rel="noopener noreferrer" target='_blank'>about-corona.net</a>, <a href='https://restcountries.eu/' rel="noopener noreferrer" target='_blank'>Rest Countries</a> and <a href='https://restcountries.eu/' rel="noopener noreferrer" target='_blank'>Big Data Cloud</a>.</Text>
                 <Text>made with ❤ by <a href='https://thecodelife.science.blog' rel="noopener noreferrer" target='_blank'>@sksuryan</a></Text>
             </div>
         );

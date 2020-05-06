@@ -62,6 +62,7 @@ const Country = styled.h1`
     font-family: Lilita One;
     font-size: 36px;
     text-transform: uppercase;
+    text-align: center;
 
     @media (max-width: 600px) {
         font-size: 28px;
