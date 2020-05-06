@@ -1,9 +1,12 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import Nav from './components/Nav'
 import Visualization from './components/Vizualization'
-import styled from 'styled-components';
 
+
+// --> Styled components start <--
+/* styled component for footer text*/
 const Text = styled.p`
   font-family: Montserrat;
   font-size: 14px;
@@ -23,12 +26,16 @@ const Text = styled.p`
     color: #000;
   }
 `;
+// --> Styled components ends <--
 
+// --> Parent/Root component to every component <--
 class App extends React.Component{
 
     constructor(props){
         super(props);
 
+        // App component's state
+        //contains data related to visualizations
         this.state = {
             data: null
         }
@@ -36,26 +43,31 @@ class App extends React.Component{
         this.loadData = this.loadData.bind(this);
     }
 
+    // to load data once component is loaded
     componentDidMount(){
-        /* calling fetchData function after component is mounted. */
+        /* calling fetchGlobalData function after component is mounted. */
         this.fetchGlobalData()
             .then(data => setTimeout(() => this.setState({data}),750))
             .catch(err => console.error(err));
     }
 
+    // calls either fetchData and fetchGlobalData depending upon parameter passed (countryCode)
     loadData(countryCode){
         this.setState({data: null});
         if(countryCode === ''){
+            // calls fetchGlobalData to fetch Global Data
             this.fetchGlobalData()
                 .then(data => setTimeout(() => this.setState({data}),750))
                 .catch(err => console.error(err));
         } else {
+            // calls fetchData to fetch data of a country
             this.fetchData(countryCode)
                 .then(data => setTimeout(() => this.setState({data}),750))
                 .catch(err => console.error(err));
         }
     }
 
+    // fetches Global Data
     async fetchGlobalData(){
         const API = `https://corona-api.com/timeline`;
         const response = await fetch(API);
@@ -64,6 +76,7 @@ class App extends React.Component{
         }
         let data = await response.json();
 
+        // getting data in a similar format as country data
         data = data.data;
         data = {name:'Global',timeline: data};
         data = {data};
@@ -71,7 +84,7 @@ class App extends React.Component{
         return data;
     }
 
-    /* asynchronously fetching data from API */
+    // fetches data of a country
     async fetchData(countryCode){
         const API = `https://corona-api.com/countries/${countryCode}?include=timeline`;
         const response = await fetch(API);
@@ -82,11 +95,13 @@ class App extends React.Component{
         return data;
     }
 
+    // returns JSX of child components for rendering
     render(){
         return (
             <div className="App">
                 <Nav loadData={this.loadData}/>
                 <Visualization data={this.state.data}/>
+                {/* Footer Text*/}
                 <Text>This website uses data from APIs graciously provided by <a href='https://about-corona.net' rel="noopener noreferrer" target='_blank'>about-corona.net</a> and <a href='https://restcountries.eu/' rel="noopener noreferrer" target='_blank'>Rest Countries</a>.</Text>
                 <Text>made with ❤ by <a href='https://thecodelife.science.blog' rel="noopener noreferrer" target='_blank'>@sksuryan</a></Text>
             </div>

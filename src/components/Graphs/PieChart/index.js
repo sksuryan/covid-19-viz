@@ -2,6 +2,7 @@ import React from 'react';
 import * as d3 from 'd3';
 import styled from 'styled-components';
 
+// styled component for svg text
 const Text = styled.text`
     font-size: 12px;
     font-family: Montserrat;
@@ -84,6 +85,7 @@ class PieChart extends React.Component {
     }
 
     render() {
+        // resizing according to screensize
         this.width = window.innerWidth>600?240:175;
         this.height = window.innerWidth>600?240:175;
         return (

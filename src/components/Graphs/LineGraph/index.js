@@ -99,7 +99,9 @@ class LineGraph extends React.Component{
     createGraph(){
         /* extracting data from props*/
         const data = this.props.data.data.timeline;
+        // which type of data for y axis
         const metric = this.props.metric;
+        // which data to be drawn
         const toDraw = this.props.draw;
 
         this.pathData = [];
@@ -124,6 +126,7 @@ class LineGraph extends React.Component{
         /* creating a yAxis function */
         const yAxis = d3.axisLeft().scale(this.yScale).tickFormat(d3.format('.3s'));
 
+        // generating d attribute for Path
         toDraw.forEach(elt => {
             this.pathData.push(
                 d3.line()

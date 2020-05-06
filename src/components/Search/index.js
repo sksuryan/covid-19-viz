@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
+// --> Styled components start <--
+//Styled component for Search wrapper
 const SearchWrapper = styled.div`
     position: relative;
     display: inline-block;
@@ -39,6 +41,7 @@ const SearchWrapper = styled.div`
      }
 `;
 
+//style component for suggestions
 const Suggestions = styled.div`
     position: absolute;
     display: none;
@@ -56,6 +59,7 @@ const Suggestions = styled.div`
     }
 `;
 
+//styled component for a suggestion
 const Button = styled.a`
     display: block;
     padding: 12px;
@@ -79,11 +83,14 @@ const Button = styled.a`
         }
     }
 `;
+// --> Styled components end <--
 
+// Search component
 class Search extends React.Component{
     constructor(props){
         super(props);
 
+        //default suggestion
         this.defaultSuggestion = 
             <Button 
                 key={0} 
@@ -92,27 +99,34 @@ class Search extends React.Component{
                 Global
             </Button>
 
+        // state containing search query and suggestions
         this.state = {
             search: '',
             suggestions: [this.defaultSuggestion]
         }
 
+        //binding updateSearch with this.
         this.updateSearch = this.updateSearch.bind(this);
     }
 
+    // update data once a suggestion is selected
     onSuggestionSelect(countryCode){
         this.setState({search: '', suggestions: [this.defaultSuggestion]});
         this.props.loadData(countryCode);
     }
 
+    // updates suggestions based on query
     updateSearch(e){
         const search = e.target.value;
+        //rerending input form
         this.setState({search});
+        //fetching search query
         if(search.length > 0){
             this.showSuggestions(search)
                 .then(data => {
                     const suggestions = [];
                     for(let i = 0; i < (data.length>6?6:data.length); i++){
+                        // creating JSX for suggestions
                         suggestions.push(
                             <Button 
                                 key={i} 
@@ -121,10 +135,12 @@ class Search extends React.Component{
                             </Button>
                         );
                     }
+                    // updating state for rerender
                     this.setState({suggestions});
                 })
                 .catch(err => {
                     console.error(err);
+                    //country not found suugestion if fetch returns a 404
                     const suggestions = [<Button key={0}>Country not found</Button>];
                     this.setState({suggestions});
                 })
@@ -134,6 +150,7 @@ class Search extends React.Component{
         }
     }
 
+    // fetches and results query results
     async showSuggestions(search){
         const API = `https://restcountries.eu/rest/v2/name/${search}?fields=name;alpha2Code;flag`;
         const response = await fetch(API);
@@ -147,6 +164,7 @@ class Search extends React.Component{
         return(
             <SearchWrapper>
                     <form className='form' onSubmit={(e) => e.preventDefault()}>
+                        {/* input form */}
                         <input
                             className='input'
                             type='text'

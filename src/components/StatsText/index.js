@@ -63,8 +63,11 @@ const Wrapper = styled.div`
 
 // --> React functional component starts <--
 const StatsText = (props) => {
+    //extracting data from props
     const data = props.data;
+    // labels for type of data
     const labels = props.labels;
+    // which data should be displayed
     const display = props.display;
     return (
         <Wrapper dir={props.dir}>

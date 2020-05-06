@@ -1,6 +1,8 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
+// --> Styled components start <--
+//keyframe animation
 const Animate = keyframes`
     0%{
         height: 0;
@@ -13,6 +15,7 @@ const Animate = keyframes`
     }
 `;
 
+//Wrapper component for everything else
 const Wrapper = styled.div`
     margin: 17% auto;
     display: flex;
@@ -39,7 +42,9 @@ const Wrapper = styled.div`
         }
     }
 `;
+// --> Styled components end <--
 
+// Functional component for Loading Animation
 const LoadingAnimation = () => {
     return (
         <Wrapper>

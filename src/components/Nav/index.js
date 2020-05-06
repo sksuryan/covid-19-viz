@@ -1,7 +1,10 @@
 import React from 'react'
 import styled from 'styled-components';
+
 import Search from '../Search';
 
+// --> Styled components start <--
+//Styled component for Logo
 const Logo = styled.h1`
     font-family: Lilita One;
     font-size: 22px;
@@ -33,6 +36,7 @@ const Logo = styled.h1`
     }
 `;
 
+// A wrapper component for the Nav
 const Wrapper = styled.div`
     display: flex;
     justify-content: space-between;
@@ -47,7 +51,9 @@ const Wrapper = styled.div`
         justify-content: center;
     }
 `;
+// --> Styled components end <--
 
+// Functional Nav component
 const Nav = (props) => {
     return (
         <Wrapper>

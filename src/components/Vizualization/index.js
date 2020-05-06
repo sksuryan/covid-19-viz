@@ -6,6 +6,7 @@ import PieChart from '../Graphs/PieChart';
 import StatsText from '../StatsText';
 import LoadingAnimation from '../LoadingAnimation';
 
+// labels and colors for various type of data.
 const colors = {
     confirmed: {
         color: '#96ceb4',
@@ -81,6 +82,7 @@ const Label = styled.h1`
     }
 `;
 
+// a seperator div to give space between elements
 const Seperator = styled.div`
     margin: 20px 0;
 
@@ -184,9 +186,11 @@ class Visualization extends React.Component{
                                 </Seperator>
                             </>
                         ):(
+                            // if there are no cases recorded in a country
                             <LoadingAnimation />
                         )
                     ):(
+                        // if data is being loaded, or null
                         <LoadingAnimation />
                     )
                 }
