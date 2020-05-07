@@ -45,37 +45,52 @@ class App extends React.Component{
 
     // to load data once component is loaded
     componentDidMount(){
-        /* calling fetchGlobalData function after component is mounted. */
+        /* checks if browser supports location features and calls default option*/
         if(navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                const {latitude, longitude} = position.coords;
-                console.log(latitude);
-                const REV_GEOCODE_API = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`;
-                fetch(REV_GEOCODE_API)
-                    .then(response => response.json())
-                    .then(data => this.loadData(data.countryCode))
-                    .then(data => setTimeout(() => this.setState({data}),750))
-                    .catch(err => console.err(err));
-            })
+            this.loadData('default');
         } else {
-            this.fetchGlobalData()
-                .then(data => setTimeout(() => this.setState({data}),750))
-                .catch(err => console.error(err));
+            //fallback for older browers
+            this.loadData('');
         }
     }
 
     // calls either fetchData and fetchGlobalData depending upon parameter passed (countryCode)
     loadData(countryCode){
-        this.setState({data: null});
         if(countryCode === ''){
+            const data = this.state.data;
+            if(data !== null)
+                this.setState({data: null});
             // calls fetchGlobalData to fetch Global Data
             this.fetchGlobalData()
-                .then(data => setTimeout(() => this.setState({data}),750))
+                .then(data => this.setState({data}))
                 .catch(err => console.error(err));
-        } else {
+
+        } else if(countryCode === 'default'){
+
+            /* fetching user's location and fetching user's country's data and fetchGlobalData as fallback if location isn't available. */
+            navigator.geolocation.getCurrentPosition((position) => {
+                    //getting latitude and longitude
+                    const {latitude, longitude} = position.coords;
+                    //API
+                    const REV_GEOCODE_API = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`;
+                    //fetching country by reverse geocoding and then loading data..
+                    fetch(REV_GEOCODE_API)
+                        .then(response => response.json())
+                        .then(data => this.loadData(data.countryCode))
+                        .catch(err => console.error(err));
+                },() => {
+                    //fallback if location isn't available
+                    this.loadData('');
+                }
+            )
+            
+        }else {
+            const data = this.state.data;
+            if(data !== null)
+                this.setState({data: null});
             // calls fetchData to fetch data of a country
             this.fetchData(countryCode)
-                .then(data => setTimeout(() => this.setState({data}),750))
+                .then(data => this.setState({data}))
                 .catch(err => console.error(err));
         }
     }

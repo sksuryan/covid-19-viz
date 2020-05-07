@@ -91,18 +91,24 @@ class Search extends React.Component{
         super(props);
 
         //default suggestion
-        this.defaultSuggestion = 
-            <Button 
-                key={0} 
-                onClick={() => this.onSuggestionSelect('')}
-            >
-                Global
-            </Button>
+        this.defaultSuggestion =
+            [ 
+                <Button key='0'
+                    onClick={() => this.onSuggestionSelect('default')}
+                >
+                    <i className="fas fa-map-marker-alt" style={{marginRight: '8px'}}></i>My Location
+                </Button>,
+                <Button key='1'
+                    onClick={() => this.onSuggestionSelect('')}
+                >
+                    <i className="fas fa-globe" style={{marginRight: '8px'}}></i>Global
+                </Button>                
+            ]
 
         // state containing search query and suggestions
         this.state = {
             search: '',
-            suggestions: [this.defaultSuggestion]
+            suggestions: [...this.defaultSuggestion]
         }
 
         //binding updateSearch with this.
@@ -145,8 +151,7 @@ class Search extends React.Component{
                     this.setState({suggestions});
                 })
         } else {
-            const suggestions = [this.defaultSuggestion];
-            this.setState({suggestions});
+            this.setState({suggestions: this.defaultSuggestions});
         }
     }
 

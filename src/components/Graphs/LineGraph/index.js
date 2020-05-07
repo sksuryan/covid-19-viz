@@ -99,8 +99,6 @@ class LineGraph extends React.Component{
     createGraph(){
         /* extracting data from props*/
         const data = this.props.data.data.timeline;
-        // which type of data for y axis
-        const metric = this.props.metric;
         // which data to be drawn
         const toDraw = this.props.draw;
 
@@ -111,6 +109,25 @@ class LineGraph extends React.Component{
         const extent = d3.extent(data, d => Date.parse(d.date));
         this.xScale.domain(extent)
             .range([this.margin.left,this.width - this.margin.right]);
+
+        //to find out the max value, out of various data passed
+        let metric = toDraw[0];
+        if(toDraw.length > 1){
+            let maxValues = [];
+            //finding out max out of each type
+            toDraw.forEach(key => {
+                const max = d3.max(data, d => d[key]);
+                maxValues.push({key,max});                
+            })
+            //find out which type has max value
+            metric = maxValues[0];
+            maxValues.forEach(elt => {
+                if(metric.max < elt.max){
+                    metric = elt;
+                }
+            })
+            metric = metric.key;
+        }
 
         /* setting up domain and range for y axis */
         this.yScale.domain(d3.extent(data, d => d[metric]))

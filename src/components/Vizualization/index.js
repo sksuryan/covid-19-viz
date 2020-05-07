@@ -160,7 +160,6 @@ class Visualization extends React.Component{
                                     <LineGraph 
                                         data={data} 
                                         screenWidth={this.state.screenWidth} 
-                                        metric='confirmed' 
                                         draw={['confirmed','active']}
                                         color={colors}
                                     />
@@ -170,20 +169,18 @@ class Visualization extends React.Component{
                                     <LineGraph 
                                         data={data} 
                                         screenWidth={this.state.screenWidth} 
-                                        metric='new_confirmed' 
                                         draw={['new_confirmed']}
                                         color={colors}
                                     />
                                 </Seperator>
                                 <Seperator>
-                                <Label>New Recovered Cases and Deaths per Day:</Label>
-                                <LineGraph 
-                                    data={data} 
-                                    screenWidth={this.state.screenWidth} 
-                                    metric='new_recovered' 
-                                    draw={['new_recovered', 'new_deaths']}
-                                    color={colors}
-                                />
+                                    <Label>New Recovered Cases and Deaths per Day:</Label>
+                                    <LineGraph 
+                                        data={data} 
+                                        screenWidth={this.state.screenWidth} 
+                                        draw={['new_recovered', 'new_deaths']}
+                                        color={colors}
+                                    />
                                 </Seperator>
                             </>
                         ):(
