@@ -93,12 +93,12 @@ class Search extends React.Component{
         //default suggestion
         this.defaultSuggestion =
             [ 
-                <Button key='0'
+                <Button key='072'
                     onClick={() => this.onSuggestionSelect('default')}
                 >
                     <i className="fas fa-map-marker-alt" style={{marginRight: '8px'}}></i>My Location
                 </Button>,
-                <Button key='1'
+                <Button key='198'
                     onClick={() => this.onSuggestionSelect('')}
                 >
                     <i className="fas fa-globe" style={{marginRight: '8px'}}></i>Global
@@ -117,7 +117,7 @@ class Search extends React.Component{
 
     // update data once a suggestion is selected
     onSuggestionSelect(countryCode){
-        this.setState({search: '', suggestions: [this.defaultSuggestion]});
+        this.setState({search: '', suggestions: [...(this.defaultSuggestion)]});
         this.props.loadData(countryCode);
     }
 
@@ -151,7 +151,8 @@ class Search extends React.Component{
                     this.setState({suggestions});
                 })
         } else {
-            this.setState({suggestions: this.defaultSuggestions});
+            const suggestions = [...this.defaultSuggestion]
+            this.setState({suggestions});
         }
     }
 
