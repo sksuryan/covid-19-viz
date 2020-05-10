@@ -17,7 +17,7 @@ const Animate = keyframes`
 
 //Wrapper component for everything else
 const Wrapper = styled.div`
-    margin: 17% auto;
+    margin: 30vh auto;
     display: flex;
     align-items: center;
 

@@ -42,6 +42,24 @@ const colors = {
     }
 }
 
+const TextWrapper = styled.p`
+    font-family: Montserrat;
+
+    font-size: 16px;
+
+    @media (max-width: 800px){
+        font-size: 14px;
+    }
+
+    text-align: center;
+
+    margin: 30vh auto;
+
+    max-width: 80%;
+
+    overflow-wrap: break-word;
+`;
+
 //  --> Styled components start <--
 /* A styled Wrapper div for every other element in the component*/
 const Wrapper = styled.div`
@@ -185,7 +203,7 @@ class Visualization extends React.Component{
                             </>
                         ):(
                             // if there are no cases recorded in a country
-                            <LoadingAnimation />
+                            <TextWrapper>No Case Reported :)</TextWrapper>
                         )
                     ):(
                         // if data is being loaded, or null
