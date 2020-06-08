@@ -41,9 +41,13 @@ class PieChart extends React.Component {
     }
 
     componentDidUpdate(prevProps){
+        // resizing according to screensize
+        this.width = window.innerWidth>600?240:175;
+        this.height = window.innerWidth>600?240:175;
         /* checking if the data is available and the same data isn't rendered*/
-        if(this.props.data.length !== 0 && (this.props.lastUpdated !== prevProps.lastUpdated || this.previousWidth !== this.width))
+        if(this.props.data.length !== 0 && (this.props.lastUpdated !== prevProps.lastUpdated || this.previousWidth !== this.width)){
             this.createChart();
+        }
     }
 
     createChart(){
@@ -85,9 +89,6 @@ class PieChart extends React.Component {
     }
 
     render() {
-        // resizing according to screensize
-        this.width = window.innerWidth>600?240:175;
-        this.height = window.innerWidth>600?240:175;
         return (
             <svg 
                 width={this.width + this.margin}
