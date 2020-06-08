@@ -37,7 +37,8 @@ class App extends React.Component{
         // App component's state
         //contains data related to visualizations
         this.state = {
-            data: null
+            data: null,
+            flag: null
         }
 
         this.loadData = this.loadData.bind(this);
@@ -55,18 +56,19 @@ class App extends React.Component{
     }
 
     // calls either fetchData and fetchGlobalData depending upon parameter passed (countryCode)
-    loadData(countryCode){
+    loadData(countryCode,flag){
+        const data = this.state.data;
         if(countryCode === ''){
-            const data = this.state.data;
             if(data !== null)
-                this.setState({data: null});
+                this.setState({data: null,flag: null});
             // calls fetchGlobalData to fetch Global Data
             this.fetchGlobalData()
-                .then(data => this.setState({data}))
+                .then(data => this.setState({data, flag: null}))
                 .catch(err => console.error(err));
 
         } else if(countryCode === 'default'){
-
+            if(data !== null)
+                this.setState({data: null,flag: null});
             /* fetching user's location and fetching user's country's data and fetchGlobalData as fallback if location isn't available. */
             navigator.geolocation.getCurrentPosition((position) => {
                     //getting latitude and longitude
@@ -76,7 +78,7 @@ class App extends React.Component{
                     //fetching country by reverse geocoding and then loading data..
                     fetch(REV_GEOCODE_API)
                         .then(response => response.json())
-                        .then(data => this.loadData(data.countryCode))
+                        .then(data => this.loadData(data.countryCode,null))
                         .catch(err => console.error(err));
                 },() => {
                     //fallback if location isn't available
@@ -85,12 +87,11 @@ class App extends React.Component{
             )
             
         }else {
-            const data = this.state.data;
             if(data !== null)
-                this.setState({data: null});
+                this.setState({data: null, flag: null});
             // calls fetchData to fetch data of a country
-            this.fetchData(countryCode)
-                .then(data => this.setState({data}))
+            this.fetchData(countryCode,flag)
+                .then(data => this.setState({...data}))
                 .catch(err => console.error(err));
         }
     }
@@ -113,14 +114,27 @@ class App extends React.Component{
     }
 
     // fetches data of a country
-    async fetchData(countryCode){
+    async fetchData(countryCode,fl){
         const API = `https://corona-api.com/countries/${countryCode}?include=timeline`;
         const response = await fetch(API);
         if(response.status !== 200) {
             throw new Error('Resource not found');
         }
         const data = await response.json();
-        return data;
+        
+        if(!fl) {
+            console.log('yo');
+            const GET_FLAG_API = `https://restcountries.eu/rest/v2/alpha/${countryCode}?fields=flag`;
+            const flagResponse = await fetch(GET_FLAG_API);
+            if(flagResponse.status !== 200){
+                throw new Error('Flag now found');
+            }
+            const flag = await flagResponse.json();
+
+            return {data,flag: flag.flag}
+
+        } else
+            return {data, flag: fl};
     }
 
     // returns JSX of child components for rendering
@@ -128,7 +142,7 @@ class App extends React.Component{
         return (
             <div className="App">
                 <Nav loadData={this.loadData}/>
-                <Visualization data={this.state.data}/>
+                <Visualization data={this.state.data} flag={this.state.flag}/>
                 {/* Footer Text*/}
                 <Text>
                     This website uses data from APIs graciously provided by <a href='https://about-corona.net' rel="noopener noreferrer" target='_blank'>about-corona.net</a>, <a href='https://restcountries.eu/' rel="noopener noreferrer" target='_blank'>Rest Countries</a> and <a href='https://restcountries.eu/' rel="noopener noreferrer" target='_blank'>Big Data Cloud</a>.</Text>

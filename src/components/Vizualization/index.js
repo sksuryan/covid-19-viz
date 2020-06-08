@@ -76,17 +76,33 @@ const Wrapper = styled.div`
 `;
 
 /* styled h1 for country name */
-const Country = styled.h1`
-    font-family: Lilita One;
-    font-size: 36px;
-    text-transform: uppercase;
-    text-align: center;
+const Country = styled.div`
 
-    @media (max-width: 600px) {
-        font-size: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+        height: 32px;
+        width: auto;
+        outline: solid black 1px;
+        @media (max-width: 600px) {
+            height: 26px;
+        }
     }
 
-    margin: 0;
+    h1 {
+        font-family: Lilita One;
+        font-size: 36px;
+        text-transform: uppercase;
+        text-align: center;
+
+        @media (max-width: 600px) {
+            font-size: 28px;
+        }
+
+        margin: 0 10px 0 0;
+    }
 `;
 
 /* styled h1 for country name */
@@ -150,9 +166,13 @@ class Visualization extends React.Component{
     render(){
         /* gets required fields from the fetched data*/        
         const data = this.props.data;
+        const flag = this.props.flag;
         return (
             <Wrapper>
-                <Country>{data?data.data.name:'Loading'}</Country>
+                <Country>
+                    <h1>{data?data.data.name:'Loading'}</h1>
+                    {flag?<img src={flag} width='60' height='60' alt=''></img>:<></>}
+                </Country>
                 {
                     data?(
                         (data.data.timeline.length>0)?(
