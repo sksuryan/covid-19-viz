@@ -220,6 +220,15 @@ class Visualization extends React.Component{
                                         color={colors}
                                     />
                                 </Seperator>
+                                <Seperator>
+                                    <Label>New Deaths per Day:</Label>
+                                    <LineGraph 
+                                        data={data} 
+                                        screenWidth={this.state.screenWidth} 
+                                        draw={['new_deaths']}
+                                        color={colors}
+                                    />
+                                </Seperator>
                             </>
                         ):(
                             // if there are no cases recorded in a country
